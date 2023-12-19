@@ -3,7 +3,17 @@
  * Если координаты не переданы - 0,0; Аналогично если только 1 координата.
  * Реализовать метод, который возвращает расстояние от точки до центра координат (0, 0)
  */
-class Point {}
+class Point {
+
+    constructor(x = 0, y = 0) {
+        this.x = x;
+        this.y = y;
+    }
+
+    lengthToCentre() {
+        return Math.pow(this.x, 2) + Math.pow(this.y, 2);
+    }
+}
 
 /**
  * Напишите класс геометрической точки в трехмерном пространстве (x, y, z),
@@ -11,7 +21,14 @@ class Point {}
  * Реализовать статический метод, который возвращает расстояние между Point3D.
  */
 class Point3D extends Point {
-    static vectorLength(a, b) {}
+
+    constructor(x = 0, y = 0, z = 0){
+        super(x, y);
+        this.z = z;
+    }
+    static vectorLength(a, b) {
+        return Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2) + Math.pow(b.z - a.z, 2))
+    }
 }
 
 /**
