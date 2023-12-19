@@ -37,10 +37,26 @@ class Point3D extends Point {
  * Для тех, кто доверяет, но проверяет: написать тесты на методы класса (oop.spec.js)
  */
 class Queue {
-    push;
-    pop;
-    size;
-    clear;
+
+    constructor(array = []) {
+        this.queue = array.reverse();
+    }
+    
+    push(...aElement) {
+        this.queue.unshift(...(aElement.reverse()));
+    };
+
+    pop() {
+        return this.queue.pop();
+    };
+
+    get size() {
+        return this.queue.length;
+    };
+
+    clear() {
+        this.queue = [];
+    };
 }
 
 module.exports = {
