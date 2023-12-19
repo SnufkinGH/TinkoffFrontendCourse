@@ -37,11 +37,33 @@ describe('es6', () => {
     });
 
     describe('#Dictionary', () => {
+
         it('экземпляр класса создается', () => {
             const dic = new core.Dictionary();
 
-            // TODO
             assert.strictEqual(!!dic, true);
+        });
+
+        it('set отрабатывает корректно', () => {
+            const dic = new core.Dictionary();
+
+            const word = 'developer'
+            const definition = 'a person who solves a problem you didn\'t know you had,' + 
+                ' in a way that you don\'t uderstand';
+
+            dic.set(word, definition);
+
+            assert.strictEqual(dic.get(word), definition);
+        });
+
+        it('проверка на <string, string> в set', () => {
+            const dic = new core.Dictionary();
+
+            const word = 'meaning of life'
+            const definition = 42;
+
+            dic.set(word, definition);
+            assert.strictEqual(dic[word], undefined);
         });
     });
 });
