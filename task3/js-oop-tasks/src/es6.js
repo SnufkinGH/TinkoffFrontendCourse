@@ -31,24 +31,12 @@ function calculateSalaryDifference(array) {
 // присмотритесь к коллекции "Map"
 // Словарь - (string, string), и все это не null и не undefined
 // * покройте класс тестами
-class Dictionary {
+class Dictionary extends Map {
 
-    constructor() {
-        this.dict = new Map();
-    }
-
-    add(word, meaning) {
+    set(word, meaning) {
         if (typeof word === 'string' && typeof meaning === 'string'){
-            this.dict.add(word, meaning);
+            super.set(word, meaning);
         }
-    }
-
-    get(word) {
-        return this.dict[word];
-    }
-
-    del(word) {
-        this.dict.delete(word);
     }
 }
 
