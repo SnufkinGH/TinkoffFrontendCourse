@@ -11,3 +11,7 @@
 2. npm i
 3. npm run build
 4. npm dev
+
+Запуск сервера:
+1. npm install -g json-server
+2. json-server --watch database.json

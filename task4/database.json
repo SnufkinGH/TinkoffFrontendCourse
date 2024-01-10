@@ -1,0 +1,32 @@
+{
+    "products": [
+      {
+        "id": 1,
+        "name": "Лэмон",
+        "link": "https://avatars.dzeninfra.ru/get-zen_doc/44645/pub_59ca7fd977d0e6cec96d88fb_59ca805a57906a990a0c0840/scale_1200",
+        "description": "Кислый",
+        "code": "228322",
+        "provider": "Лэмонелло"
+      },
+      {
+        "id": 2,
+        "name": "Мистер Арбуз",
+        "link": "https://masterpiecer-images.s3.yandex.net/992b7a7073d311ee94a42ab2a9c6ab46:upscaled",
+        "description": "Арбузный",
+        "code": "228323",
+        "provider": "Жорданчик"
+      },
+      {
+        "id": 3,
+        "name": "Салак",
+        "link": "https://frutsnab.ru/wa-data/public/shop/products/19/15/1519/images/3610/3610.970.jpg",
+        "description": "Не знаю что писат",
+        "code": "123456",
+        "provider": "Нет"
+      }
+    ],
+    "user-profile": {
+      "name": "Андрей Хохлов",
+      "group": 6407
+    }
+  }
