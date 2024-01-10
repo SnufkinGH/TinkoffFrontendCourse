@@ -4,7 +4,8 @@ import './index.less';
 let idCard = -1;
 
 class Card{
-    constructor(name, link, description, code, provider) {
+    constructor(id, name, link, description, code, provider) {
+        this.id = id;
         this.name = name;
         this.link = link;
         this.description = description;
@@ -14,138 +15,237 @@ class Card{
 
 }
 
-function setupCards() {
-    const lemon = new Card(
-        'Лэмон',
-        'https://avatars.dzeninfra.ru/get-zen_doc/44645/pub_59ca7fd977d0e6cec96d88fb_59ca805a57906a990a0c0840/scale_1200',
-        'Кислый',
-        '228322',
-        'Лэмонелло'
+async function setupCards() {
+    const loader = document.getElementById('absolute-loader');
+    loader.classList.remove('loader__invisible');
+
+    const orange = new Card(
+        Math.random().toString(36).substring(2, length+2),
+        'Апельсин',
+        'https://foodcity.ru/storage/products/October2018/6XZSr6ddCl6cxfo0UchP.jpg',
+        'Description',
+        '3545346',
+        'Provider'
     );
-    const watermellon = new Card(
-        'Мистер Арбуз',
-        'https://masterpiecer-images.s3.yandex.net/992b7a7073d311ee94a42ab2a9c6ab46:upscaled',
-        'Арбузный',
-        '228323',
-        'Жорданчик'
+    const garnet = new Card(
+        Math.random().toString(36).substring(2, length+2),
+        'Гранат',
+        'https://fruktovik-eco.ru/wp-content/uploads/2020/04/granat-indiya.jpg',
+        'Description',
+        '5423653',
+        'Provider'
     );
-    const salak = new Card(
-        'Салак',
-        'https://frutsnab.ru/wa-data/public/shop/products/19/15/1519/images/3610/3610.970.jpg',
-        'Не знаю что писать',
-        '123456',
-        'Нет'
+    const apple = new Card(
+        Math.random().toString(36).substring(2, length+2),
+        'Яблоко',
+        'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIxMTEyNi8zODdwbnQuanBlZw.jpg',
+        'Description',
+        '1231354',
+        'Provider'
+    );
+    const cherry = new Card(
+        Math.random().toString(36).substring(2, length+2),
+        'Вишня',
+        'https://foodcity.ru/storage/products/October2018/NTqwdSD2SiXVflQqOfgi.jpg',
+        'Description',
+        '1234123',
+        'Provider'
+    );
+    const melon = new Card(
+        Math.random().toString(36).substring(2, length+2),
+        'Дыня',
+        'https://cdn.metro-cc.ru/ru/ru_pim_404971001001_01.png',
+        'Description',
+        '12534563',
+        'Provider'
     );
 
-    const cards = [lemon, watermellon, salak];
+    const skeletons = document.getElementsByClassName('skeleton');
+    for(const skeleton of skeletons){
+        skeleton.classList.add('form-card__invisible');
+    }
 
-    window.localStorage.clear();
-    window.localStorage.setItem('cards', JSON.stringify(cards));
+    const cards = [orange, apple, cherry, garnet, melon];
+
+    for(const card of cards){
+        await fetch('http://localhost:3000/products',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(card)
+            })
+    }
+
+    loader.classList.add('loader__invisible');
     location.reload();
 }
 
-function getCards() {
-    const cards = JSON.parse(window.localStorage.getItem('cards'));
+async function getPage(){
+    await getProfile();
+    await getCards();
+}
+
+async function getProfile(){
+    const userProfileInfo = await fetch('http://localhost:3000/user-profile').then(res => res.json());
+
+    const header = document.createElement('p');
+    header.setAttribute('class', 'header__text');
+    header.textContent = `${userProfileInfo.name} ${userProfileInfo.group}`;
+
+    const profile = document.getElementById('profile-header');
+    profile.insertBefore(header, profile.firstChild);
+}
+
+async function getCards() {
+    const loader = document.getElementById('absolute-loader');
+    loader.classList.remove('loader__invisible');
+    const cards = await fetch('http://localhost:3000/products').then(res => res.json())
+
+    const skeletons = document.getElementsByClassName('skeleton');
+
+    for(const skeleton of skeletons){
+        skeleton.classList.add('form-card__invisible');
+    }
+
     for(let i = 0; i < cards.length; ++i){
         const card = cards[i];
 
-        const sCardItem = document.createElement('div');
-        sCardItem.id = `item${i}`;
-        sCardItem.setAttribute('class', 'form-card__item');
-        document.getElementsByClassName('form-card__list_item')[0].appendChild(sCardItem);
-
-        const sCardCode = document.createElement('div');
-        sCardCode.id = `code${i}`
-        sCardCode.setAttribute('class', 'form-card__code');
-        sCardCode.textContent = `Код товара: ${card.code}`;
-        document.getElementById(`item${i}`).appendChild(sCardCode);
-
-        const sCardRow = document.createElement('div');
-        sCardRow.id = `row${i}`;
-        sCardRow.setAttribute('class', 'form-card__row');
-        document.getElementById(`item${i}`).appendChild(sCardRow)
-
-        const sCardImage = document.createElement('img');
-        sCardImage.setAttribute('class', 'form-card__img');
-        sCardImage.src = card.link;
-        document.getElementById(`row${i}`).appendChild(sCardImage);
-
-        const sCardName = document.createElement('div');
-        sCardName.setAttribute('class', 'form-card__name')
-        sCardName.textContent = `Название товара: ${card.name}`;
-        document.getElementById(`row${i}`).appendChild(sCardName);
-
-        const sCardProvider = document.createElement('div');
-        sCardProvider.setAttribute('class', 'form-card__provider');
-        sCardProvider.textContent = `Поставщик: ${card.provider}`;
-        document.getElementById(`item${i}`).appendChild(sCardProvider);
-
-        const sCardDescription = document.createElement('div');
-        sCardDescription.setAttribute('class', 'form-card__description');
-        sCardDescription.textContent = `Описание: ${card.description}`;
-        document.getElementById(`item${i}`).appendChild(sCardDescription);
-
-        const sCardButtonsRow = document.createElement('div');
-        sCardButtonsRow.id = `buttons-row${i}`;
-        sCardButtonsRow.setAttribute('class', 'form-card__row');
-        document.getElementById(`item${i}`).appendChild(sCardButtonsRow);
-
-        const sCardEditButton = document.createElement('button');
-        sCardEditButton.id = `edit-card${i}`;
-        sCardEditButton.setAttribute('class', 'form-card__edit-button');
-        sCardEditButton.textContent = 'Редактировать';
-        sCardEditButton.addEventListener('click', editCard);
-        sCardEditButton.pos = i;
-        document.getElementById(`buttons-row${i}`).appendChild(sCardEditButton);
-
-        const sCardDeleteButton = document.createElement('button');
-        sCardDeleteButton.id = `delete-card${i}`;
-        sCardDeleteButton.setAttribute('class', 'form-card__delete-button');
-        sCardDeleteButton.textContent = 'Удалить';
-        sCardDeleteButton.addEventListener('click', deleteCard);
-        sCardDeleteButton.pos = i;
-        document.getElementById(`buttons-row${i}`).appendChild(sCardDeleteButton);
+        getCard(card);
     }
+    loader.classList.add('loader__invisible');
 }
 
-function createCard() {
-    const card = getFormData(form);
+function getCard(card){
+    const sCardItem = document.createElement('div');
+    sCardItem.id = `item${card.id}`;
+    sCardItem.setAttribute('class', 'form-card__item');
+    document.getElementsByClassName('form-card__list_item')[0].appendChild(sCardItem);
+
+    const sCardCode = document.createElement('div');
+    sCardCode.id = `code${card.id}`
+    sCardCode.setAttribute('class', 'form-card__code');
+    sCardCode.textContent = `Код товара: ${card.code}`;
+    document.getElementById(`item${card.id}`).appendChild(sCardCode);
+
+    const sCardRow = document.createElement('div');
+    sCardRow.id = `row${card.id}`;
+    sCardRow.setAttribute('class', 'form-card__row');
+    document.getElementById(`item${card.id}`).appendChild(sCardRow)
+
+    const sCardImage = document.createElement('img');
+    sCardImage.setAttribute('class', 'form-card__img');
+    sCardImage.src = card.link;
+    document.getElementById(`row${card.id}`).appendChild(sCardImage);
+
+    const sCardName = document.createElement('div');
+    sCardName.setAttribute('class', 'form-card__name')
+    sCardName.textContent = `Название товара: ${card.name}`;
+    document.getElementById(`row${card.id}`).appendChild(sCardName);
+
+    const sCardProvider = document.createElement('div');
+    sCardProvider.setAttribute('class', 'form-card__provider');
+    sCardProvider.textContent = `Поставщик: ${card.provider}`;
+    document.getElementById(`item${card.id}`).appendChild(sCardProvider);
+
+    const sCardDescription = document.createElement('div');
+    sCardDescription.setAttribute('class', 'form-card__description');
+    sCardDescription.textContent = `Описание: ${card.description}`;
+    document.getElementById(`item${card.id}`).appendChild(sCardDescription);
+
+    const sCardButtonsRow = document.createElement('div');
+    sCardButtonsRow.id = `buttons-row${card.id}`;
+    sCardButtonsRow.setAttribute('class', 'form-card__row');
+    document.getElementById(`item${card.id}`).appendChild(sCardButtonsRow);
+
+    const sCardEditButton = document.createElement('button');
+    sCardEditButton.id = `edit-card${card.id}`;
+    sCardEditButton.setAttribute('class', 'form-card__edit-button');
+    sCardEditButton.textContent = 'Редактировать';
+    sCardEditButton.addEventListener('click', editCard);
+    sCardEditButton.pos = card.id;
+    document.getElementById(`buttons-row${card.id}`).appendChild(sCardEditButton);
+
+    const sCardDeleteButton = document.createElement('button');
+    sCardDeleteButton.id = `delete-card${card.id}`;
+    sCardDeleteButton.setAttribute('class', 'form-card__delete-button');
+    sCardDeleteButton.textContent = 'Удалить';
+    sCardDeleteButton.addEventListener('click', deleteCard);
+    sCardDeleteButton.pos = card.id;
+    document.getElementById(`buttons-row${card.id}`).appendChild(sCardDeleteButton);
+}
+
+async function createCard() {
+    const loader = document.getElementById('absolute-loader');
+    loader.classList.remove('loader__invisible');
+    let card = getFormData(form);
 
     if(card.name === '' || card.link === '' || card.description === '' || card.code === '' || card.provider === ''){
         alert('Не все поля были заполнены. Для того, чтобы продолжить необходимо заполнить все поля.');
         throw new Error();
     }
 
-    let cards = JSON.parse(window.localStorage.getItem('cards'));
+    let cards = await fetch(`http://localhost:3000/products`,
+        {
+            method: 'GET'
+        }).then(res => res.json())
     const idCardForUpdate = cards.findIndex(el => el.code === card.code);
 
     if(idCard >= 0) {
-        cards[idCard] = card;
+        card = await fetch(
+            `http://localhost:3000/products/${idCard}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(card)
+            }
+        ).then(res => res.json());
+        location.reload();
     } else if(idCardForUpdate >= 0) {
-        cards[idCardForUpdate] = card;
+        card = await fetch(
+            `http://localhost:3000/products/${idCardForUpdate}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(card)
+            }
+        ).then(res => res.json());
+        location.reload();
     } else {
-        if(cards){
-            cards.push(card);
-        } else{
-            cards = [card]
-        }
+        card = await fetch(
+            'http://localhost:3000/products',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(card)
+            }
+        ).then(res => res.json());
+        getCard(card);
     }
 
     const createButton = document.getElementById('create-card');
     createButton.textContent = 'Создать';
 
     idCard = -1;
-
-    window.localStorage.clear();
-    window.localStorage.setItem('cards', JSON.stringify(cards));
-    location.reload();
+    loader.classList.add('loader__invisible');
 }
 
-function editCard(){
-    const cards = JSON.parse(window.localStorage.getItem('cards'));
+async function editCard(){
+    const loader = document.getElementById('absolute-loader');
+    loader.classList.remove('loader__invisible');
     idCard = event.target.pos;
 
-    const card = cards[idCard];
+    const card = await fetch(`http://localhost:3000/products/${idCard}`,
+        {
+            method: 'GET'
+        }).then(res => res.json())
 
     const formInputName = document.getElementById('input-name');
     formInputName.value = card.name;
@@ -164,14 +264,19 @@ function editCard(){
 
     const createButton = document.getElementById('create-card');
     createButton.textContent = 'Подтвердить';
+    loader.classList.add('loader__invisible');
 }
 
-function deleteCard(){
-    const cards = JSON.parse(window.localStorage.getItem('cards'));
-    cards.splice(event.target.pos, 1);
-    window.localStorage.clear();
-    window.localStorage.setItem('cards', JSON.stringify(cards));
-    location.reload();
+async function deleteCard(){
+    const loader = document.getElementById('absolute-loader');
+    loader.classList.remove('loader__invisible');
+    await fetch(`http://localhost:3000/products/${event.target.pos}`,
+        {
+            method: 'DELETE',
+        }).then(() => {
+            location.reload();
+    });
+    loader.classList.add('loader__invisible');
 }
 
 function getFormData(form) {
@@ -259,4 +364,4 @@ const form = document.getElementById('input-form')
 createButton.addEventListener('click', createCard);
 setupButton.addEventListener('click', setupCards);
 
-window.onload = getCards
+await getPage();
